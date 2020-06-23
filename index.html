@@ -3,6 +3,7 @@
     <head>
         <title>Home</title>
         <link rel="stylesheet" href="mystyles.css">
+        <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
     </head>
     
     <body>
@@ -11,6 +12,8 @@
           <a class="active" href="index.html">Home</a>
           <a href="contact.html">Contact</a>
           <a href="about.html">About</a>
+          <button class="inputbox" onclick="myfunction()"><i class="fa fa-search"></i></button>
+          <input class="inputbox" id="myinput">
         </div>
     
         
@@ -31,5 +34,16 @@
         
     
     </body>
+    
+    <script>
+        
+        function myfunction() {
+            myinput = document.getElementById("myinput");
+            alert(myinput.value);
+            myinput.value = "";
+        }
+
+    </script>
+    
     
 </html>
