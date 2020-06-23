@@ -59,3 +59,9 @@
             .container2 {
               padding: 2px 16px;
             }
+
+            .inputbox {
+                margin-top: 20px;
+                margin-bottom: 20px;
+                float: right;
+            }
