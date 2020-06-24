@@ -38,8 +38,18 @@
     <script>
         
         function myfunction() {
+            
+            data = [{pokemon:"bulbasur",type:"grass"},{pokemon: "pikachu",type:"electric"},{pokemon:"charmander",type:"fire"}];
+            
             myinput = document.getElementById("myinput");
-            alert(myinput.value);
+            
+            for (i=0;i<3;i++) {
+                if (data[i]['pokemon'] == myinput.value.toLowerCase()) {
+                    alert(data[i]['type']);
+                    break;
+                }
+            }
+            
             myinput.value = "";
         }
 
