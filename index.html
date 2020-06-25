@@ -4,6 +4,7 @@
         <title>Home</title>
         <link rel="stylesheet" href="mystyles.css">
         <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+        <script src="pokedex.json"></script>
     </head>
     
     <body>
@@ -12,7 +13,7 @@
           <a class="active" href="index.html">Home</a>
           <a href="contact.html">Contact</a>
           <a href="about.html">About</a>
-          <button class="inputbox" onclick="myfunction()"><i class="fa fa-search"></i></button>
+          <button class="mybutton" onclick="myfunction()"><i class="fa fa-search"></i></button>
           <input class="inputbox" id="myinput">
         </div>
     
@@ -28,6 +29,9 @@
         <div class="container">
             <h1>Home page</h1>
             <p>This is my home page</p>
+            
+            <div id="info"></div>
+            
             <a href="http://www.cnn.com" target="_blank">CNN - USA news network</a><br>
             <img src="pikamove.gif" style="width: 300px; padding: 20px;">
         </div>
@@ -39,13 +43,16 @@
         
         function myfunction() {
             
-            data = [{pokemon:"bulbasur",type:"grass"},{pokemon: "pikachu",type:"electric"},{pokemon:"charmander",type:"fire"}];
+            //data = [{pokemon:"bulbasur",type:"grass"},{pokemon: "pikachu",type:"electric"},{pokemon:"charmander",type:"fire"}];
             
             myinput = document.getElementById("myinput");
+            mydiv = document.getElementById("info");
             
-            for (i=0;i<3;i++) {
-                if (data[i]['pokemon'] == myinput.value.toLowerCase()) {
-                    alert(data[i]['type']);
+            for (i=0;i<data.length;i++) {
+                if (data[i]['name']['english'].toLowerCase() == myinput.value.toLowerCase()) {
+                    //alert(data[i]['type'][0]);
+                    
+                    mydiv.innerHTML = "<h1>" + data[i]['name']['english'] + "</h1><h3>" + data[i]['type'][0] + "</h3>"
                     break;
                 }
             }
