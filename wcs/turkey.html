@@ -1,0 +1,169 @@
+<html>
+
+    <head>
+        <link rel='stylesheet' href='css/leaflet.css'/>
+        <link rel='stylesheet' href='css/materialize.min.css'/>
+        <link href="https://fonts.googleapis.com/icon?family=Material+Icons" rel="stylesheet">
+        <script src='js/leaflet.js'></script>
+        <script src='js/materialize.min.js'></script>
+        <script src="js/chart.js@2.8.0"></script>
+        <script src='wt_centroid.geojson'></script>        
+        <title>Mark Hoel</title>
+        
+        <style>
+            .nav-wrapper {
+                background-color: #00448b;
+                padding: 0;
+                font-family: Roboto,sans-serif;
+                font-weight: 300;
+                font-size: 13px;
+            }
+            
+            .page-footer {
+                background-color: #00448b
+            }
+            
+            .active {
+                font-weight: 900;
+            }
+            
+        </style>
+    </head>
+
+    <body>
+        <nav class="nav-wrapper">
+            <div  style="margin-left: 15px; margin-right: 15px">
+              <a href="index.html" class="brand-logo"><img src='images/logo.svg' width="70px" style="padding-top: 5px"></a>
+              <ul id="nav-mobile" class="right hide-on-med-and-down">
+                <li><a href="turkey.html" class="active">Demo</a></li>
+                <li><a href="resume.html">Resume</a></li>
+              </ul>
+            </div>
+        </nav>
+        
+        <div style="margin-left: 50px; margin-right: 50px">
+            <h3 style="text-align: center">Demo - Wild Turkey harvest by Wildlife Management Unit</h3>
+            <p>The wild turkey is a conservation triumph for Ontario. By the early 1980s, the species was effectively exterpated from Ontario, however, a successful re-introduction campaign was launched in 1984 and now there is a sizable annual hunt throughout the province.</p>
+            <p>This demo combines data from the Ontario geohub (<a href='https://geohub.lio.gov.on.ca/datasets/wildlife-management-unit/data' target="_blank">wmu</a>, <a href='https://data.ontario.ca/dataset/wild-turkey-harvests' target="_blank">wild turkey harvest</a>), a custom Python script to collate harvest data from various years, an attribute join and export to geojson format using QGIS and finally the web development presentation you see below, including the Leaflet mapping framework and Chartjs.</p>
+        
+        </div>
+        
+        <div class="row" style="margin-top: 5px; margin-bottom: 0px;">
+            <div class="col s12 m6 l8">
+                <div class="card" style="padding: 5px">
+                    <div id='map' style='width:100%; height:100%'></div>
+                </div>
+            </div>
+            
+            <div class="col s12 m6 l4">
+                <div class="card" style="padding: 10px;">
+                    <h5>Wild Turkey harvest by WMU</h5>
+                    <canvas id="chartjs-2" class="chartjs" width="100%" style="display: block;"></canvas>
+                </div>
+            </div>
+            <div class="col s12 m6 l4">
+                <div class="card">
+                <div class="card-content">
+                  <span class="card-title">Demo work flow</span>
+                  <h6>Research and data science</h6>
+                  <ol>
+                      <li>Download WMU (shape) and Turkey (CSV)</li>
+                      <li>Process CSV using a custom Python script</li>
+                      <li>QGIS join to geocode CSV data using WMU</li>
+                      <li>QGIS to create centroid layer</li>
+                      <li>QGIS to export ESRI shape to geojson</li>
+                  </ol>
+                  <h6>Data presentation and programming</h6>
+                  <p>This presentation makes use standard HTML,CSS and Javascript as well a number of useful JS and CSS frameworks (Materialize, Leaflet mapping, Chartjs...).</p>
+                </div>
+              </div>
+            </div>
+            
+        </div>
+        
+        <footer class="page-footer">
+          <div class="container">
+            <div class="row">
+              <div class="col l6 s12">
+                <h5 class="white-text">Mark Hoel demo site</h5>
+                <p class="grey-text text-lighten-4">Demonstration for Geospatial data analyst position</p>
+              </div>
+              <div class="col l4 offset-l2 s12">
+                <h5 class="white-text">Links</h5>
+                <ul>
+                  <li><a class="grey-text text-lighten-3" href="https://www.fitzii.com/apply/50684" target="_blank">Job link</a></li>
+                  <li><a class="grey-text text-lighten-3" href="https://geohub.lio.gov.on.ca/" target="_blank">Ontario geohub</a></li>
+                </ul>
+              </div>
+            </div>
+          </div>
+          <div class="footer-copyright">
+            <div class="container">
+            © 2020 Mark Hoel
+            </div>
+          </div>
+        </footer>
+        
+    </body>
+    
+    <script>
+        
+        map()
+        graph()
+        
+        function map() {
+            // Set up the world map
+            map = new L.Map('map');
+            var cartocdn = 'https://{s}.basemaps.cartocdn.com/light_all/{z}/{x}/{y}.png';
+            // https://carto.com/help/building-maps/basemap-list/
+            carto = new L.TileLayer(cartocdn);
+            map.setView([44,-79], 6);
+            map.addLayer(carto);
+            
+            /*
+            L.geoJSON(turkey, {
+                style: function (feature) {
+                return {fillColor: feature.properties.Color, color: feature.properties.Color, weight: 6};
+            },}
+            ).bindPopup(function (layer) {
+                return layer.feature.properties.Name;
+            }).addTo(map);
+            */
+
+            // Loop to write out circles from test.js
+
+            conf_x_factor = 15;
+            //console.log(data)
+            link = "https://files.ontario.ca/environment-and-energy/fish-and-wildlife/mnr_wmu"; 
+            for (i=0;i<data['features'].length;i++) {
+                wmu = data['features'][i]['properties']['OFFICIAL_N']
+                
+                L.circle([data['features'][i]['geometry']['coordinates'][1],data['features'][i]['geometry']['coordinates'][0]],{color:'white',fillColor:'#f30',fillOpacity:0.5,radius:data['features'][i]['properties']['field_2'] * conf_x_factor}).addTo(map).bindPopup("WNU#: <a href='" + link + wmu + "_pdf.pdf' target='_blank'>" + wmu + "</a><br> Total harvest:" + data['features'][i]['properties']['field_2']);    
+            }
+            
+        }
+    
+        function graph() {
+            
+            labels = ['WMU 65', 'WMU 73', 'WMU 80', 'WMU 84','WMU 67'];
+            top5data = [6828,3688,3625,3487,2848];
+            
+            new Chart(document.getElementById("chartjs-2"),{"type":"horizontalBar","data":{"labels":labels,"datasets":[{"label":"Percent of calls","data":top5data,"fill":false,"backgroundColor":["#007acc","#0099ff","#33adff","#66c2ff","#b2b2b0"],"borderColor":["#007acc"],"borderWidth":1}]},"options":{"scales":{"xAxes":[{"ticks":{"beginAtZero":true}}]},tooltips: {
+                custom: function(tooltip) {
+                    if (!tooltip) return;
+                    // disable displaying the color box;
+                    tooltip.displayColors = false;
+                  },
+                callbacks: {
+                    label: function(tooltipItem) {
+                        return tooltipItem.xLabel + "% percent";
+                    }
+                }   
+            }
+            }});
+            
+        }
+        
+    </script>
+
+</html>
